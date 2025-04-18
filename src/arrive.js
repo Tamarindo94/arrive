@@ -275,7 +275,7 @@ var Arrive = (function(window, $, undefined) {
     };
 
     this.addTimeoutHandler = function(target, selector, callback, options, data) {
-      if (!options.timeout || options.timeout <= 0 || !options.fireOnTimeout) {
+      if (!options.timeout || options.timeout <= 0) {
         return;
       }
     
@@ -285,7 +285,8 @@ var Arrive = (function(window, $, undefined) {
     
       data.timeoutId = setTimeout(() => {
         me.unbindEventWithSelectorAndCallback.call(target, selector, callback);
-        callback.call(null, null);
+        if(options.fireOnTimeout)
+					callback.call(null, null);
       }, options.timeout);
     }
 
