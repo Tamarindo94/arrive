@@ -43,7 +43,7 @@ var Arrive = (function(window, $, undefined) {
       callCallbacks: function(callbacksToBeCalled, registrationData, mutationEvents) {
         if (!callbacksToBeCalled.length) return;
 
-        if (registrationData && registrationData.options.onceOnly) {
+        if (registrationData && (registrationData.options.once || registrationData.options.onceOnly)) {
           // as onlyOnce param is true, make sure we fire the event for only one item
           callbacksToBeCalled = [callbacksToBeCalled[0]];
 
@@ -174,7 +174,8 @@ var Arrive = (function(window, $, undefined) {
         me              = this;
 
     var defaultOptions = {
-      fireOnAttributesModification: false
+      fireOnAttributesModification: false,
+			foam: false
     };
 
     // actual event registration before adding it to bucket
@@ -274,7 +275,7 @@ var Arrive = (function(window, $, undefined) {
     };
 
     this.addTimeoutHandler = function(target, selector, callback, options, data) {
-      if (!options.timeout || options.timeout <= 0) {
+      if (!options.timeout || options.timeout <= 0 || !options.fireOnTimeout) {
         return;
       }
     
@@ -300,9 +301,12 @@ var Arrive = (function(window, $, undefined) {
     // Default options for 'arrive' event
     var arriveDefaultOptions = {
       fireOnAttributesModification: false,
+			foam: false,
       onceOnly: false,
+			once: false,
       existing: false,
-      timeout: 0  // default 0 (no timeout)
+      timeout: 0,  // default 0 (no timeout)
+			fireOnTimeout: false,
     };
 
     function getArriveObserverConfig(options) {
@@ -312,7 +316,7 @@ var Arrive = (function(window, $, undefined) {
         subtree: true
       };
 
-      if (options.fireOnAttributesModification) {
+      if (options.foam || options.fireOnAttributesModification) {
         config.attributes = true;
       }
 
@@ -370,7 +374,7 @@ var Arrive = (function(window, $, undefined) {
 
       // For promise and async support, we can only do onceOnly=true
       if (!callback)
-        options.onceOnly = true;
+        options.once = options.onceOnly = true;
       
       if (options.existing) {
         var existing = [];
@@ -383,7 +387,7 @@ var Arrive = (function(window, $, undefined) {
         }
 
         // no need to bind event if the callback has to be fired only once and we have already found the element
-        if (options.onceOnly && existing.length) {
+        if ((options.once || options.onceOnly) && existing.length) {
           if (callback) {
             return callback.call(existing[0].elem, existing[0].elem);
           } else {
@@ -414,7 +418,9 @@ var Arrive = (function(window, $, undefined) {
     // Default options for 'leave' event
     var leaveDefaultOptions = {
       onceOnly: false,
+			once: false,
       timeout: 0,  // default 0 (no timeout)
+			fireOnTimeout: false,
     };
 
     function getLeaveObserverConfig() {
@@ -457,7 +463,7 @@ var Arrive = (function(window, $, undefined) {
         mutationBindEvent.call(this, selector, options, callback);
       } else {
         // For promise and async support, we can only do onceOnly=true
-        options.onceOnly = true;
+        options.once = options.onceOnly = true;
 
         var a = this;
         return new Promise(resolve => mutationBindEvent.call(a, selector, options, resolve));
@@ -505,4 +511,3 @@ var Arrive = (function(window, $, undefined) {
   return Arrive;
 
 })(window, typeof jQuery === 'undefined' ? null : jQuery, undefined);
-
