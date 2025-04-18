@@ -1,6 +1,15 @@
 # arrive.js
 [![CDNJS version](https://img.shields.io/cdnjs/v/arrive.svg)](https://cdnjs.com/libraries/arrive)
 
+Customized version of [arrive.js](https://github.com/uzairfarooq/arrive) by [uzairfarooq](https://github.com/uzairfarooq).
+
+Differences:
+
+- added aliases 'once' and 'foam' for options 'onceOnly' and 'fireOnAttributesModification'; if the alias is true, the original option is considered true, but not vice versa
+- callback does not fire on timeout, unless new option 'fireOnTimeout' is set to true
+
+---
+
 A lightweight JS library for watching DOM element creation and removal using [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver).
 
 ## Key Features
